@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-const anecdotes = [
+const initialAnecdotes = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
   'The first 90 percent of the code accounts for the first 90 percent of the development time...',
@@ -10,8 +10,8 @@ const anecdotes = [
 ]
 
 const useAnecdoteStore = create((set) => ({
-  anecdotes,
-  votes: anecdotes.map(() => 0),
+  anecdotes: initialAnecdotes,
+  votes: initialAnecdotes.map(() => 0),
   selected: 0,
 
   vote: () =>
@@ -24,6 +24,12 @@ const useAnecdoteStore = create((set) => ({
   nextAnecdote: () =>
     set((state) => ({
       selected: Math.floor(Math.random() * state.anecdotes.length)
+    })),
+
+  addAnecdote: (anecdote) =>
+    set((state) => ({
+      anecdotes: [...state.anecdotes, anecdote],
+      votes: [...state.votes, 0]
     }))
 }))
 
