@@ -1,32 +1,26 @@
-import { useAnecdotes } from "./store"
+import useAnecdoteStore from './store'
 
 const App = () => {
-  const anecdotes = useAnecdotes()
-
-  const vote = (id) => {
-    console.log("vote", id)
-  }
+  const anecdote = useAnecdoteStore(
+    (state) => state.anecdotes[state.selected]
+  )
+  const votes = useAnecdoteStore(
+    (state) => state.votes[state.selected]
+  )
+  const vote = useAnecdoteStore((state) => state.vote)
+  const nextAnecdote = useAnecdoteStore(
+    (state) => state.nextAnecdote
+  )
 
   return (
-    <div>
-      <h2>Anecdotes</h2>
-      {anecdotes.map((anecdote) => (
-        <div key={anecdote.id}>
-          <div>{anecdote.content}</div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
-          </div>
-        </div>
-      ))}
-      <h2>create new</h2>
-      <form>
-        <div>
-          <input data-testid="new" />
-        </div>
-        <button>create</button>
-      </form>
-    </div>
+    <main>
+      <h1>Anecdote of the day</h1>
+      <p>{anecdote}</p>
+      <p>has {votes} votes</p>
+
+      <button onClick={vote}>Vote</button>
+      <button onClick={nextAnecdote}>Next anecdote</button>
+    </main>
   )
 }
 
