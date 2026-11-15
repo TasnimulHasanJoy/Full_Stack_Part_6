@@ -3,14 +3,20 @@ import useAnecdoteStore from '../store'
 const AnecdoteForm = () => {
   const addAnecdote = useAnecdoteStore((state) => state.addAnecdote)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     const content = event.target.anecdote.value.trim()
 
-    if (content.length > 0) {
-      addAnecdote(content)
+    if (content.length === 0) {
+      return
+    }
+
+    try {
+      await addAnecdote(content)
       event.target.reset()
+    } catch (error) {
+      console.error(error)
     }
   }
 

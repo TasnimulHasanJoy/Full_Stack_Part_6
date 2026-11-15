@@ -15,17 +15,30 @@ const useAnecdoteStore = create((set) => ({
       )
     })),
 
-  addAnecdote: (content) =>
+  addAnecdote: async (content) => {
+    const response = await fetch('http://localhost:3001/anecdotes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        content,
+        votes: 0
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Could not save the anecdote')
+    }
+
+    const savedAnecdote = await response.json()
+
     set((state) => ({
-      anecdotes: [
-        ...state.anecdotes,
-        {
-          id: String(Date.now()),
-          content,
-          votes: 0
-        }
-      ]
-    })),
+      anecdotes: [...state.anecdotes, savedAnecdote]
+    }))
+
+    return savedAnecdote
+  },
 
   setFilter: (filter) => set({ filter })
 }))
