@@ -5,6 +5,7 @@ const AnecdoteList = () => {
   const anecdotes = useAnecdoteStore((state) => state.anecdotes)
   const filter = useAnecdoteStore((state) => state.filter)
   const voteFor = useAnecdoteStore((state) => state.voteFor)
+  const deleteAnecdote = useAnecdoteStore((state) => state.deleteAnecdote)
   const showNotification = useNotificationStore(
     (state) => state.showNotification
   )
@@ -13,6 +14,14 @@ const AnecdoteList = () => {
     try {
       await voteFor(anecdote.id)
       showNotification(`You voted '${anecdote.content}'`)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleDelete = async (anecdote) => {
+    try {
+      await deleteAnecdote(anecdote.id)
     } catch (error) {
       console.error(error)
     }
@@ -32,6 +41,9 @@ const AnecdoteList = () => {
           <p>
             has {anecdote.votes}{' '}
             <button onClick={() => handleVote(anecdote)}>vote</button>
+            {anecdote.votes === 0 && (
+              <button onClick={() => handleDelete(anecdote)}>delete</button>
+            )}
           </p>
         </div>
       ))}

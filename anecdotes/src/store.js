@@ -69,6 +69,25 @@ const useAnecdoteStore = create((set, get) => ({
     return savedAnecdote
   },
 
+  deleteAnecdote: async (id) => {
+    const response = await fetch(
+      `http://localhost:3001/anecdotes/${encodeURIComponent(id)}`,
+      {
+        method: 'DELETE'
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error('Could not delete the anecdote')
+    }
+
+    set((state) => ({
+      anecdotes: state.anecdotes.filter(
+        (anecdote) => String(anecdote.id) !== String(id)
+      )
+    }))
+  },
+
   setFilter: (filter) => set({ filter })
 }))
 
