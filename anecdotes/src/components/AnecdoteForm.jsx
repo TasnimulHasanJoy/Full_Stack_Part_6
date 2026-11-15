@@ -6,16 +6,17 @@ const AnecdoteForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const anecdote = event.target.anecdote.value.trim()
+    const content = event.target.anecdote.value.trim()
 
-    if (anecdote.length > 0) {
-      addAnecdote(anecdote)
+    if (content.length > 0) {
+      addAnecdote(content)
       event.target.reset()
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Create new</h2>
       <input name="anecdote" />
       <button type="submit">Add anecdote</button>
     </form>

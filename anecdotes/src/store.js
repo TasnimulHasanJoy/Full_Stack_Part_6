@@ -1,30 +1,30 @@
 import { create } from 'zustand'
 
-const initialAnecdotes = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place.'
-]
-
 const useAnecdoteStore = create((set) => ({
-  anecdotes: initialAnecdotes,
-  votes: initialAnecdotes.map(() => 0),
+  anecdotes: [],
   filter: '',
 
-  voteFor: (index) =>
+  setAnecdotes: (anecdotes) => set({ anecdotes }),
+
+  voteFor: (id) =>
     set((state) => ({
-      votes: state.votes.map((count, currentIndex) =>
-        currentIndex === index ? count + 1 : count
+      anecdotes: state.anecdotes.map((anecdote) =>
+        anecdote.id === id
+          ? { ...anecdote, votes: anecdote.votes + 1 }
+          : anecdote
       )
     })),
 
-  addAnecdote: (anecdote) =>
+  addAnecdote: (content) =>
     set((state) => ({
-      anecdotes: [...state.anecdotes, anecdote],
-      votes: [...state.votes, 0]
+      anecdotes: [
+        ...state.anecdotes,
+        {
+          id: String(Date.now()),
+          content,
+          votes: 0
+        }
+      ]
     })),
 
   setFilter: (filter) => set({ filter })
