@@ -12,6 +12,7 @@ const initialAnecdotes = [
 const useAnecdoteStore = create((set) => ({
   anecdotes: initialAnecdotes,
   votes: initialAnecdotes.map(() => 0),
+  filter: '',
 
   voteFor: (index) =>
     set((state) => ({
@@ -24,7 +25,9 @@ const useAnecdoteStore = create((set) => ({
     set((state) => ({
       anecdotes: [...state.anecdotes, anecdote],
       votes: [...state.votes, 0]
-    }))
+    })),
+
+  setFilter: (filter) => set({ filter })
 }))
 
 export default useAnecdoteStore
