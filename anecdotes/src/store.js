@@ -12,18 +12,12 @@ const initialAnecdotes = [
 const useAnecdoteStore = create((set) => ({
   anecdotes: initialAnecdotes,
   votes: initialAnecdotes.map(() => 0),
-  selected: 0,
 
-  vote: () =>
+  voteFor: (index) =>
     set((state) => ({
-      votes: state.votes.map((count, index) =>
-        index === state.selected ? count + 1 : count
+      votes: state.votes.map((count, currentIndex) =>
+        currentIndex === index ? count + 1 : count
       )
-    })),
-
-  nextAnecdote: () =>
-    set((state) => ({
-      selected: Math.floor(Math.random() * state.anecdotes.length)
     })),
 
   addAnecdote: (anecdote) =>
