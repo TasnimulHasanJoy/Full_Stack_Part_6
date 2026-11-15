@@ -13,7 +13,7 @@ const AnecdoteList = () => {
   const handleVote = async (anecdote) => {
     try {
       await voteFor(anecdote.id)
-      showNotification(`You voted '${anecdote.content}'`)
+      showNotification(`you voted '${anecdote.content}'`)
     } catch (error) {
       console.error(error)
     }
