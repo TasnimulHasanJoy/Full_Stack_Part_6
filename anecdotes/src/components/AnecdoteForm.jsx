@@ -1,7 +1,11 @@
 import useAnecdoteStore from '../store'
+import useNotificationStore from '../notificationStore'
 
 const AnecdoteForm = () => {
   const addAnecdote = useAnecdoteStore((state) => state.addAnecdote)
+  const showNotification = useNotificationStore(
+    (state) => state.showNotification
+  )
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -14,6 +18,7 @@ const AnecdoteForm = () => {
 
     try {
       await addAnecdote(content)
+      showNotification(`A new anecdote '${content}' created`)
       event.target.reset()
     } catch (error) {
       console.error(error)
@@ -24,7 +29,7 @@ const AnecdoteForm = () => {
     <form onSubmit={handleSubmit}>
       <h2>Create new</h2>
       <input name="anecdote" />
-      <button type="submit">Add anecdote</button>
+      <button type="submit">create</button>
     </form>
   )
 }
