@@ -5,12 +5,20 @@ const AnecdoteList = () => {
   const votes = useAnecdoteStore((state) => state.votes)
   const voteFor = useAnecdoteStore((state) => state.voteFor)
 
+  const sortedAnecdotes = anecdotes
+    .map((anecdote, index) => ({
+      anecdote,
+      votes: votes[index],
+      index
+    }))
+    .toSorted((first, second) => second.votes - first.votes)
+
   return (
     <div>
-      {anecdotes.map((anecdote, index) => (
+      {sortedAnecdotes.map(({ anecdote, votes, index }) => (
         <div key={`${anecdote}-${index}`}>
           <p>{anecdote}</p>
-          <p>has {votes[index]} votes</p>
+          <p>has {votes} votes</p>
           <button onClick={() => voteFor(index)}>Vote</button>
         </div>
       ))}
