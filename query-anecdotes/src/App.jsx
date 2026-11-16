@@ -1,6 +1,6 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const getAnecdotes = async () => {
   const response = await fetch('http://localhost:3001/anecdotes')
@@ -13,6 +13,8 @@ const getAnecdotes = async () => {
 }
 
 const App = () => {
+  const queryClient = useQueryClient()
+
   const handleVote = () => {
     console.log('vote')
   }
@@ -21,6 +23,28 @@ const App = () => {
     queryKey: ['anecdotes'],
     queryFn: getAnecdotes,
     retry: false
+  })
+
+  const createAnecdoteMutation = useMutation({
+    mutationFn: async (content) => {
+      const response = await fetch('http://localhost:3001/anecdotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      })
+
+      if (!response.ok) {
+        throw new Error('Could not create anecdote')
+      }
+
+      return response.json()
+    },
+    onSuccess: (newAnecdote) => {
+      queryClient.setQueryData(['anecdotes'], (anecdotes) => [
+        ...anecdotes,
+        newAnecdote
+      ])
+    }
   })
 
   if (result.isPending) {
@@ -36,7 +60,7 @@ const App = () => {
       <h3>Anecdote app</h3>
 
       <Notification />
-      <AnecdoteForm />
+      <AnecdoteForm createAnecdote={createAnecdoteMutation.mutate} />
 
       {result.data.map((anecdote) => (
         <div key={anecdote.id}>
