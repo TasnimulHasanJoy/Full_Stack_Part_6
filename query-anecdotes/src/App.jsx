@@ -2,9 +2,11 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useAnecdotes from './hooks/useAnecdotes'
+import { useNotificationValue } from './NotificationContext'
 
 const App = () => {
   const queryClient = useQueryClient()
+  const { showNotification } = useNotificationValue()
 
   const voteAnecdoteMutation = useMutation({
     mutationFn: async (anecdote) => {
@@ -24,6 +26,7 @@ const App = () => {
       return response.json()
     },
     onSuccess: (savedAnecdote) => {
+      showNotification(`anecdote '${savedAnecdote.content}' voted`)
       queryClient.setQueryData(['anecdotes'], (anecdotes) =>
         anecdotes.map((anecdote) =>
           anecdote.id === savedAnecdote.id
@@ -66,6 +69,7 @@ const App = () => {
       return response.json()
     },
     onSuccess: (newAnecdote) => {
+      showNotification(`anecdote '${newAnecdote.content}' created`)
       queryClient.setQueryData(['anecdotes'], (anecdotes) => [
         ...anecdotes,
         newAnecdote
