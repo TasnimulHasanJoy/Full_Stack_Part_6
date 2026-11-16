@@ -15,8 +15,47 @@ const getAnecdotes = async () => {
 const App = () => {
   const queryClient = useQueryClient()
 
-  const handleVote = () => {
-    console.log('vote')
+  const voteAnecdoteMutation = useMutation({
+    mutationFn: async (anecdote) => {
+      const response = await fetch(
+        `http://localhost:3001/anecdotes/${anecdote.id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(anecdote)
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Could not save vote')
+      }
+
+      return response.json()
+    },
+    onSuccess: (savedAnecdote) => {
+      queryClient.setQueryData(['anecdotes'], (anecdotes) =>
+        anecdotes.map((anecdote) =>
+          anecdote.id === savedAnecdote.id
+            ? {
+                ...savedAnecdote,
+                votes: Math.max(anecdote.votes, savedAnecdote.votes)
+              }
+            : anecdote
+        )
+      )
+    }
+  })
+
+  const handleVote = (anecdote) => {
+    const updatedAnecdote = { ...anecdote, votes: anecdote.votes + 1 }
+
+    queryClient.setQueryData(['anecdotes'], (anecdotes) =>
+      anecdotes.map((item) =>
+        item.id === anecdote.id ? updatedAnecdote : item
+      )
+    )
+
+    voteAnecdoteMutation.mutate(updatedAnecdote)
   }
 
   const result = useQuery({
