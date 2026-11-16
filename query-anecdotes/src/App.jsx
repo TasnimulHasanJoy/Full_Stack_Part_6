@@ -1,16 +1,7 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-const getAnecdotes = async () => {
-  const response = await fetch('http://localhost:3001/anecdotes')
-
-  if (!response.ok) {
-    throw new Error('Could not fetch anecdotes')
-  }
-
-  return response.json()
-}
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import useAnecdotes from './hooks/useAnecdotes'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -58,11 +49,7 @@ const App = () => {
     voteAnecdoteMutation.mutate(updatedAnecdote)
   }
 
-  const result = useQuery({
-    queryKey: ['anecdotes'],
-    queryFn: getAnecdotes,
-    retry: false
-  })
+  const result = useAnecdotes()
 
   const createAnecdoteMutation = useMutation({
     mutationFn: async (content) => {
