@@ -1,10 +1,15 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import AnecdoteList from './AnecdoteList'
 import Filter from './Filter'
 import useAnecdoteStore from '../store'
 
 describe('AnecdoteList', () => {
+  afterEach(() => {
+    cleanup()
+    vi.unstubAllGlobals()
+  })
+
   it('renders anecdotes from the store sorted by votes', () => {
     useAnecdoteStore.setState({
       anecdotes: [
@@ -52,5 +57,25 @@ describe('AnecdoteList', () => {
       'Clean code matters',
       'More about clean code'
     ])
+  })
+
+  it('increases the anecdote vote count when voted for', async () => {
+    const anecdote = { id: '1', content: 'Testing is useful', votes: 1 }
+    const updatedAnecdote = { ...anecdote, votes: 2 }
+
+    useAnecdoteStore.setState({ anecdotes: [anecdote], filter: '' })
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => updatedAnecdote
+      })
+    )
+
+    render(<AnecdoteList />)
+
+    await fireEvent.click(screen.getByRole('button', { name: 'vote' }))
+
+    expect(await screen.findByText(/has 2/)).toBeTruthy()
   })
 })
