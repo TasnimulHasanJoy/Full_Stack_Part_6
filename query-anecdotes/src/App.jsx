@@ -61,12 +61,13 @@ const App = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content })
       })
+      const createdAnecdote = await response.json()
 
       if (!response.ok) {
-        throw new Error('Could not create anecdote')
+        throw new Error(createdAnecdote.error || 'Could not create anecdote')
       }
 
-      return response.json()
+      return createdAnecdote
     },
     onSuccess: (newAnecdote) => {
       showNotification(`anecdote '${newAnecdote.content}' created`)
@@ -74,6 +75,9 @@ const App = () => {
         ...anecdotes,
         newAnecdote
       ])
+    },
+    onError: (error) => {
+      showNotification(error.message)
     }
   })
 

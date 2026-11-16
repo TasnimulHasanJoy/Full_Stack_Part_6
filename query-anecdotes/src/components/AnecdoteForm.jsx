@@ -10,7 +10,7 @@ const AnecdoteForm = ({ createAnecdote }) => {
     <div>
       <h3>create new</h3>
       <form onSubmit={onCreate}>
-        <input name="anecdote" minLength={5} required />
+        <input name="anecdote" required />
         <button type="submit">create</button>
       </form>
     </div>
