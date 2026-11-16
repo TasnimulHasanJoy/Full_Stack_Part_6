@@ -1,6 +1,7 @@
-import { render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import AnecdoteList from './AnecdoteList'
+import Filter from './Filter'
 import useAnecdoteStore from '../store'
 
 describe('AnecdoteList', () => {
@@ -20,5 +21,36 @@ describe('AnecdoteList', () => {
     )
 
     expect(renderedContents).toEqual(['Most votes', 'Some votes', 'Few votes'])
+  })
+
+  it('renders only anecdotes that match the filter', () => {
+    useAnecdoteStore.setState({
+      anecdotes: [
+        { id: '1', content: 'Clean code matters', votes: 2 },
+        { id: '2', content: 'React is a library', votes: 5 },
+        { id: '3', content: 'More about clean code', votes: 1 }
+      ],
+      filter: ''
+    })
+
+    const { container } = render(
+      <>
+        <Filter />
+        <AnecdoteList />
+      </>
+    )
+
+    fireEvent.change(screen.getByTestId('filter'), {
+      target: { value: 'clean code' }
+    })
+
+    const renderedContents = Array.from(
+      container.querySelectorAll('div > div > p:first-child')
+    ).map((anecdote) => anecdote.textContent)
+
+    expect(renderedContents).toEqual([
+      'Clean code matters',
+      'More about clean code'
+    ])
   })
 })
